@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th1 06, 2026 lúc 08:05 AM
+-- Thời gian đã tạo: Th1 13, 2026 lúc 06:08 PM
 -- Phiên bản máy phục vụ: 8.4.7
 -- Phiên bản PHP: 8.5.0
 
@@ -29,11 +29,11 @@ DELIMITER $$
 --
 DROP PROCEDURE IF EXISTS `sp_DoanhThuBayNgay`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_DoanhThuBayNgay` ()   BEGIN
-	SELECT
+    SELECT
         DATE(ngay_dat) AS ngay,
         COALESCE(SUM(gia_ve), 0) AS doanh_thu
-	FROM ve_tau
-	WHERE (DATE(ngay_dat) - CURDATE() BETWEEN 0 AND 7) AND trang_thai = 'Đã thanh toán'
+    FROM ve_tau
+    WHERE (CURDATE() - DATE(ngay_dat) BETWEEN 0 AND 7) AND trang_thai = 'Đã thanh toán'
     GROUP BY DATE(ngay_dat)
     ORDER BY ngay ASC;
 END$$
