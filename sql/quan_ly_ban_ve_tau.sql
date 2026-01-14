@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th1 13, 2026 lúc 06:08 PM
+-- Thời gian đã tạo: Th1 14, 2026 lúc 06:42 AM
 -- Phiên bản máy phục vụ: 8.4.7
 -- Phiên bản PHP: 8.5.0
 
@@ -53,22 +53,6 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ThongKeDoanhSo` (IN `p_thang` IN
     WHERE nv.vai_tro = 'Nhân viên'
     GROUP BY nv.id
     ORDER BY doanh_so DESC;
-END$$
-
-DROP PROCEDURE IF EXISTS `sp_ThongKeDoanhSoNhanVien`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ThongKeDoanhSoNhanVien` (IN `p_thang` INT, IN `p_nam` INT)   BEGIN
-SELECT nv.ma_nhan_vien,
-       nv.ho_ten,
-       COUNT(vt.id)                as so_ve_ban,
-       COALESCE(SUM(vt.gia_ve), 0) as doanh_so
-FROM nhan_vien nv
-         LEFT JOIN ve_tau vt ON nv.id = vt.id_nhan_vien
-    AND MONTH (vt.ngay_dat) = p_thang
-    AND YEAR (vt.ngay_dat) = p_nam
-    AND vt.trang_thai = 'Đã thanh toán'
-WHERE nv.vai_tro = 'Nhân viên'
-GROUP BY nv.id
-ORDER BY doanh_so DESC;
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_ThongKeDoanhThuTheoNgay`$$
