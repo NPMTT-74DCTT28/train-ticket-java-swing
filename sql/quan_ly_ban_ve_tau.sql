@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th1 14, 2026 lúc 06:42 AM
+-- Thời gian đã tạo: Th1 15, 2026 lúc 03:56 PM
 -- Phiên bản máy phục vụ: 8.4.7
 -- Phiên bản PHP: 8.5.0
 
@@ -347,7 +347,7 @@ CREATE TABLE IF NOT EXISTS `nhan_vien` (
   `id` int NOT NULL AUTO_INCREMENT,
   `ma_nhan_vien` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `mat_khau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ho_ten` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ho_ten` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay_sinh` date NOT NULL DEFAULT (curdate()),
   `gioi_tinh` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `sdt` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -485,7 +485,7 @@ INSERT INTO `tuyen_duong` (`id`, `ma_tuyen`, `ten_tuyen`, `id_ga_di`, `id_ga_den
 DROP TABLE IF EXISTS `ve_tau`;
 CREATE TABLE IF NOT EXISTS `ve_tau` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `ma_ve` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ma_ve` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `id_khach_hang` int NOT NULL,
   `id_lich_trinh` int NOT NULL,
   `id_ghe` int NOT NULL,
