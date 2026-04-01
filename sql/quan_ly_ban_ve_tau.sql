@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: localhost
--- Thời gian đã tạo: Th1 15, 2026 lúc 03:56 PM
--- Phiên bản máy phục vụ: 8.4.7
--- Phiên bản PHP: 8.5.0
+-- Máy chủ: 127.0.0.1
+-- Thời gian đã tạo: Th4 01, 2026 lúc 10:36 AM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -58,12 +58,12 @@ END$$
 DROP PROCEDURE IF EXISTS `sp_ThongKeDoanhThuTheoNgay`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ThongKeDoanhThuTheoNgay` (IN `p_ngay_bat_dau` DATE, IN `p_ngay_ket_thuc` DATE)   BEGIN
 SELECT
-    DATE (ngay_dat) as ngay, COALESCE (SUM (gia_ve), 0) as doanh_thu, COUNT (id) as so_ve_ban
+    DATE(ngay_dat) as ngay, COALESCE(SUM(gia_ve), 0) as doanh_thu, COUNT(id) as so_ve_ban
 FROM ve_tau
-WHERE DATE (ngay_dat) BETWEEN p_ngay_bat_dau
-  AND p_ngay_ket_thuc
+WHERE DATE(ngay_dat) BETWEEN '2025-01-01'
+  AND '2025-12-31'
   AND trang_thai = 'Đã thanh toán'
-GROUP BY DATE (ngay_dat)
+GROUP BY DATE(ngay_dat)
 ORDER BY ngay ASC;
 END$$
 
@@ -129,11 +129,11 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `ga_tau`;
 CREATE TABLE IF NOT EXISTS `ga_tau` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ma_ga` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: HN, DN, SG',
-  `ten_ga` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: Ga Hà Nội',
-  `dia_chi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `thanh_pho` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ma_ga` varchar(20) NOT NULL COMMENT 'VD: HN, DN, SG',
+  `ten_ga` varchar(100) NOT NULL COMMENT 'VD: Ga Hà Nội',
+  `dia_chi` varchar(255) DEFAULT NULL,
+  `thanh_pho` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ma_ga` (`ma_ga`),
   UNIQUE KEY `ten_ga` (`ten_ga`)
@@ -163,9 +163,9 @@ INSERT INTO `ga_tau` (`id`, `ma_ga`, `ten_ga`, `dia_chi`, `thanh_pho`) VALUES
 
 DROP TABLE IF EXISTS `ghe`;
 CREATE TABLE IF NOT EXISTS `ghe` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `so_ghe` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: A1, B2',
-  `id_toa_tau` int NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `so_ghe` varchar(10) NOT NULL COMMENT 'VD: A1, B2',
+  `id_toa_tau` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_ghe_trong_toa` (`so_ghe`,`id_toa_tau`),
   KEY `id_toa_tau` (`id_toa_tau`)
@@ -233,13 +233,13 @@ INSERT INTO `ghe` (`id`, `so_ghe`, `id_toa_tau`) VALUES
 
 DROP TABLE IF EXISTS `khach_hang`;
 CREATE TABLE IF NOT EXISTS `khach_hang` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `cccd` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ho_ten` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ngay_sinh` date DEFAULT (curdate()),
-  `gioi_tinh` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sdt` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `dia_chi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cccd` varchar(20) DEFAULT NULL,
+  `ho_ten` varchar(100) NOT NULL,
+  `ngay_sinh` date DEFAULT curdate(),
+  `gioi_tinh` varchar(20) NOT NULL,
+  `sdt` varchar(20) NOT NULL,
+  `dia_chi` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sdt` (`sdt`),
   UNIQUE KEY `cccd` (`cccd`)
@@ -279,13 +279,13 @@ INSERT INTO `khach_hang` (`id`, `cccd`, `ho_ten`, `ngay_sinh`, `gioi_tinh`, `sdt
 
 DROP TABLE IF EXISTS `lich_trinh`;
 CREATE TABLE IF NOT EXISTS `lich_trinh` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ma_lich_trinh` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `id_tau` int NOT NULL,
-  `id_tuyen_duong` int NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ma_lich_trinh` varchar(20) DEFAULT NULL,
+  `id_tau` int(11) NOT NULL,
+  `id_tuyen_duong` int(11) NOT NULL,
   `ngay_di` datetime NOT NULL,
   `ngay_den` datetime NOT NULL,
-  `trang_thai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `trang_thai` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_tau_schedule` (`id_tau`,`ngay_di`),
   UNIQUE KEY `ma_lich_trinh` (`ma_lich_trinh`),
@@ -319,9 +319,9 @@ INSERT INTO `lich_trinh` (`id`, `ma_lich_trinh`, `id_tau`, `id_tuyen_duong`, `ng
 
 DROP TABLE IF EXISTS `loai_toa`;
 CREATE TABLE IF NOT EXISTS `loai_toa` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ten_loai` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: Ngồi mềm điều hòa, Giường nằm',
-  `he_so_gia` decimal(3,2) DEFAULT '1.00',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ten_loai` varchar(50) NOT NULL COMMENT 'VD: Ngồi mềm điều hòa, Giường nằm',
+  `he_so_gia` decimal(3,2) DEFAULT 1.00,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ten_loai` (`ten_loai`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -344,16 +344,16 @@ INSERT INTO `loai_toa` (`id`, `ten_loai`, `he_so_gia`) VALUES
 
 DROP TABLE IF EXISTS `nhan_vien`;
 CREATE TABLE IF NOT EXISTS `nhan_vien` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ma_nhan_vien` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `mat_khau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ho_ten` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ngay_sinh` date NOT NULL DEFAULT (curdate()),
-  `gioi_tinh` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sdt` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `dia_chi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `vai_tro` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ma_nhan_vien` varchar(20) NOT NULL,
+  `mat_khau` varchar(255) NOT NULL,
+  `ho_ten` varchar(100) NOT NULL,
+  `ngay_sinh` date NOT NULL DEFAULT curdate(),
+  `gioi_tinh` varchar(20) NOT NULL,
+  `sdt` varchar(20) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `dia_chi` varchar(255) NOT NULL,
+  `vai_tro` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ma_nhan_vien` (`ma_nhan_vien`),
   UNIQUE KEY `sdt` (`sdt`),
@@ -383,9 +383,9 @@ INSERT INTO `nhan_vien` (`id`, `ma_nhan_vien`, `mat_khau`, `ho_ten`, `ngay_sinh`
 
 DROP TABLE IF EXISTS `tau`;
 CREATE TABLE IF NOT EXISTS `tau` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ma_tau` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: SE1, TN1',
-  `ten_tau` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: Tàu Thống Nhất SE1',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ma_tau` varchar(20) NOT NULL COMMENT 'VD: SE1, TN1',
+  `ten_tau` varchar(100) NOT NULL COMMENT 'VD: Tàu Thống Nhất SE1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ma_tau` (`ma_tau`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -413,10 +413,10 @@ INSERT INTO `tau` (`id`, `ma_tau`, `ten_tau`) VALUES
 
 DROP TABLE IF EXISTS `toa_tau`;
 CREATE TABLE IF NOT EXISTS `toa_tau` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ma_toa` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: Toa 1, Toa 2',
-  `id_tau` int NOT NULL,
-  `id_loai_toa` int NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ma_toa` varchar(20) NOT NULL COMMENT 'VD: Toa 1, Toa 2',
+  `id_tau` int(11) NOT NULL,
+  `id_loai_toa` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_toa_trong_tau` (`ma_toa`,`id_tau`),
   KEY `id_tau` (`id_tau`),
@@ -449,12 +449,12 @@ INSERT INTO `toa_tau` (`id`, `ma_toa`, `id_tau`, `id_loai_toa`) VALUES
 
 DROP TABLE IF EXISTS `tuyen_duong`;
 CREATE TABLE IF NOT EXISTS `tuyen_duong` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ma_tuyen` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: HN-SG',
-  `ten_tuyen` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_ga_di` int NOT NULL,
-  `id_ga_den` int NOT NULL,
-  `khoang_cach_km` int DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ma_tuyen` varchar(20) NOT NULL COMMENT 'VD: HN-SG',
+  `ten_tuyen` varchar(100) NOT NULL,
+  `id_ga_di` int(11) NOT NULL,
+  `id_ga_den` int(11) NOT NULL,
+  `khoang_cach_km` int(11) DEFAULT NULL,
   `gia_co_ban` decimal(10,2) NOT NULL COMMENT 'Giá gốc chưa nhân hệ số',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ma_tuyen` (`ma_tuyen`),
@@ -484,15 +484,15 @@ INSERT INTO `tuyen_duong` (`id`, `ma_tuyen`, `ten_tuyen`, `id_ga_di`, `id_ga_den
 
 DROP TABLE IF EXISTS `ve_tau`;
 CREATE TABLE IF NOT EXISTS `ve_tau` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ma_ve` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_khach_hang` int NOT NULL,
-  `id_lich_trinh` int NOT NULL,
-  `id_ghe` int NOT NULL,
-  `id_nhan_vien` int DEFAULT NULL,
-  `ngay_dat` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ma_ve` varchar(20) NOT NULL,
+  `id_khach_hang` int(11) NOT NULL,
+  `id_lich_trinh` int(11) NOT NULL,
+  `id_ghe` int(11) NOT NULL,
+  `id_nhan_vien` int(11) DEFAULT NULL,
+  `ngay_dat` datetime DEFAULT current_timestamp(),
   `gia_ve` decimal(10,2) NOT NULL,
-  `trang_thai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `trang_thai` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ma_ve` (`ma_ve`),
   UNIQUE KEY `unique_booking` (`id_lich_trinh`,`id_ghe`),
@@ -559,38 +559,38 @@ INSERT INTO `ve_tau` (`id`, `ma_ve`, `id_khach_hang`, `id_lich_trinh`, `id_ghe`,
 (51, 'VE-07-22', 12, 13, 15, 7, '2025-07-02 09:00:00', 500000.00, 'Đã thanh toán');
 
 --
--- Ràng buộc đối với các bảng kết xuất
+-- Các ràng buộc cho các bảng đã đổ
 --
 
 --
--- Ràng buộc cho bảng `ghe`
+-- Các ràng buộc cho bảng `ghe`
 --
 ALTER TABLE `ghe`
   ADD CONSTRAINT `ghe_ibfk_1` FOREIGN KEY (`id_toa_tau`) REFERENCES `toa_tau` (`id`) ON DELETE CASCADE;
 
 --
--- Ràng buộc cho bảng `lich_trinh`
+-- Các ràng buộc cho bảng `lich_trinh`
 --
 ALTER TABLE `lich_trinh`
   ADD CONSTRAINT `lich_trinh_ibfk_1` FOREIGN KEY (`id_tau`) REFERENCES `tau` (`id`),
   ADD CONSTRAINT `lich_trinh_ibfk_2` FOREIGN KEY (`id_tuyen_duong`) REFERENCES `tuyen_duong` (`id`);
 
 --
--- Ràng buộc cho bảng `toa_tau`
+-- Các ràng buộc cho bảng `toa_tau`
 --
 ALTER TABLE `toa_tau`
   ADD CONSTRAINT `toa_tau_ibfk_1` FOREIGN KEY (`id_tau`) REFERENCES `tau` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `toa_tau_ibfk_2` FOREIGN KEY (`id_loai_toa`) REFERENCES `loai_toa` (`id`);
 
 --
--- Ràng buộc cho bảng `tuyen_duong`
+-- Các ràng buộc cho bảng `tuyen_duong`
 --
 ALTER TABLE `tuyen_duong`
   ADD CONSTRAINT `tuyen_duong_ibfk_1` FOREIGN KEY (`id_ga_di`) REFERENCES `ga_tau` (`id`),
   ADD CONSTRAINT `tuyen_duong_ibfk_2` FOREIGN KEY (`id_ga_den`) REFERENCES `ga_tau` (`id`);
 
 --
--- Ràng buộc cho bảng `ve_tau`
+-- Các ràng buộc cho bảng `ve_tau`
 --
 ALTER TABLE `ve_tau`
   ADD CONSTRAINT `ve_tau_ibfk_1` FOREIGN KEY (`id_khach_hang`) REFERENCES `khach_hang` (`id`),
