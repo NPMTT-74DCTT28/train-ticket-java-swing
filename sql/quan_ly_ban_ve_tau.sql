@@ -309,9 +309,7 @@ CREATE TABLE IF NOT EXISTS `khach_hang`
 (
     100
 ) NOT NULL,
-    `ngay_sinh` date DEFAULT curdate
-(
-),
+    `ngay_sinh` date DEFAULT CURRENT_DATE(),
     `gioi_tinh` varchar
 (
     20
@@ -503,9 +501,7 @@ CREATE TABLE IF NOT EXISTS `nhan_vien`
 (
     100
 ) NOT NULL,
-    `ngay_sinh` date NOT NULL DEFAULT curdate
-(
-),
+    `ngay_sinh` date NOT NULL DEFAULT CURRENT_DATE(),
     `gioi_tinh` varchar
 (
     20
